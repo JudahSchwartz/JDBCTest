@@ -22,7 +22,7 @@ public class JDBC {
                     driver, url, port, database, username, password);
             try (Connection connect = DriverManager.getConnection(connection)) {
                 System.out.println("Connected to Database!");
-               // createNamesTable(connect);
+                createNamesTable(connect);
                 Set<String> names = randomNames(100_000);
                 insertNames(names, connect);
                 ResultSet rs = findNamesWithTwoOrMoreVowels(connect);
@@ -31,10 +31,6 @@ public class JDBC {
                     System.out.println(rs.getString("Name"));
                 }
                 System.out.println(deleteMoreThanFiveLettersAndTwoVowels(connect) + " rows deleted");
-
-
-
-
             }
             System.out.println("Database Closed!");
         } catch (ClassNotFoundException ex) {
@@ -60,12 +56,8 @@ public class JDBC {
 
     private static void insertNames(Set<String> names, Connection connect) throws SQLException, InterruptedException {
         final String sql = "insert into names(name) values (?)";
-
-        // System.out.println(joiner.toString());
         //maybe could be faster if spliced the set and used threads?
-
-        PreparedStatement query = null;
-        query = connect.prepareStatement(sql);
+        PreparedStatement query = connect.prepareStatement(sql);
         for (String s : names) {
             query.setString(1, s);
             query.addBatch();
@@ -73,13 +65,7 @@ public class JDBC {
         }
 
         query.executeBatch();
-
-
-
     }
-
-
-
     private static Set<String> randomNames(int numNames) {
         Set<String> names = ConcurrentHashMap.newKeySet();
 
@@ -92,7 +78,6 @@ public class JDBC {
         for (int i = 'A'; i < 'Z'; i++) {
             letters.add((char) i);
         }
-            //syncronize on rand?
 
             for(int i = 0; i < numNames; i++) {
                 threadpool.submit(new Runnable() {
